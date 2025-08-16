@@ -1,4 +1,3 @@
-````markdown
 # HeartGuard — Logistic Regression From Scratch (Gradio)
 
 A plug-and-play web app for **binary classification on any CSV**.  
@@ -17,6 +16,8 @@ Upload a CSV, pick a target column, and the app will:
 
 ## Quickstart
 
+Clone and set up the environment:
+
 ```bash
 git clone <your-repo-url>
 cd heartguard-logreg
@@ -27,9 +28,28 @@ source .venv/bin/activate   # macOS/Linux
 # Windows (cmd):        .venv\Scripts\activate.bat
 
 pip install -r requirements.txt
-python app_tabs.py
-# open the shown local URL (default http://127.0.0.1:7860)
 ````
+
+### Option A) Run in foreground (simple)
+
+```bash
+python app_tabs.py
+# open http://127.0.0.1:7860
+```
+
+### Option B) Run in background (recommended)
+
+We include helper scripts that start/stop the app detached on **port 7891**:
+
+```bash
+# start (defaults to port 7891)
+./start_server.sh
+# open the app:
+open http://127.0.0.1:7891
+
+# stop (pass the port if you changed it)
+./stop_server.sh 7891
+```
 
 ---
 
@@ -69,6 +89,9 @@ python app_tabs.py
 ```
 heartguard-logreg/
 ├─ app_tabs.py                 # Gradio UI (Train on Upload + Batch Predicts)
+├─ serve.py                    # Tiny launcher used by start_server.sh
+├─ start_server.sh             # Start detached (defaults to port 7891)
+├─ stop_server.sh              # Stop a running server by port
 ├─ src/
 │  ├─ model_scratch.py         # Vectorized logistic regression (GD)
 │  └─ train.py                 # Offline training CLI (saves artifacts/)
@@ -86,18 +109,20 @@ heartguard-logreg/
 ## Troubleshooting
 
 **Port already in use**
-Kill the old server and re-run:
 
-```bash
-lsof -ti :7860 | xargs kill -9
-python app_tabs.py
-```
+* If you ran foreground mode (7860):
 
-Or launch on a different port:
+  ```bash
+  lsof -ti :7860 | xargs kill -9
+  python app_tabs.py
+  ```
+* If you used the background script (7891):
 
-```bash
-python -c 'import app_tabs; app_tabs.demo.launch(server_port=7861, inbrowser=True)'
-```
+  ```bash
+  ./stop_server.sh 7891
+  ./start_server.sh 7891
+  open http://127.0.0.1:7891
+  ```
 
 **App opens but no “Train on Upload” tab**
 You’re likely running an old file. Check which file Python is importing:
@@ -132,19 +157,20 @@ This writes:
 
 ---
 
-## (Optional) Make the app port configurable
+## (Optional) Make the app port configurable in code
 
-Change the very last lines of `app_tabs.py` to:
+If you prefer to bake the port into `app_tabs.py`, adjust the final lines to:
 
 ```python
 if __name__ == "__main__":
     import os
     demo.launch(
         server_name="127.0.0.1",
-        server_port=int(os.getenv("PORT", "7860")),
+        server_port=int(os.getenv("PORT", "7891")),  # default 7891
         inbrowser=True,
     )
 ```
 
-```
-```
+*(Note: `server_name` should be just the host, e.g. `"127.0.0.1"`, not `"127.0.0.1:7891"`.)*
+
+
