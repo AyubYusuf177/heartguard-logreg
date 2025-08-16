@@ -22,3 +22,5 @@ data/*
 
 # Jupyter
 .ipynb_checkpoints/
+gradio-*.log
+gradio-*.pid
