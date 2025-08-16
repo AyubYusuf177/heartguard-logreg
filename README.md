@@ -174,3 +174,29 @@ if __name__ == "__main__":
 *(Note: `server_name` should be just the host, e.g. `"127.0.0.1"`, not `"127.0.0.1:7891"`.)*
 
 
+# =========================
+# Start / Stop / Verify UI
+
+# --- Start the app (runs in background; survives closing the terminal) ---
+./start_server.sh
+
+# --- Open the UI in your browser (macOS) ---
+open http://127.0.0.1:7891
+# (Linux) xdg-open http://127.0.0.1:7891
+# (Windows) start http://127.0.0.1:7891
+
+# --- Verify it's running / listening on the port ---
+lsof -iTCP:7891 -sTCP:LISTEN -nP      # should show a Python process bound to 127.0.0.1:7891
+
+# --- Check recent logs if the page says "site can't be reached" ---
+tail -n 80 gradio-7891.log
+
+# --- Stop the app cleanly ---
+./stop_server.sh
+
+# --- Notes ---
+# - After a reboot (or if you stop it), just run ./start_server.sh again.
+# - Logs live at gradio-7891.log; the background process ID is stored in gradio-7891.pid.
+# - If 7891 is busy, edit start_server.sh to use a different PORT and update the URL accordingly.
+
+
