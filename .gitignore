@@ -1,0 +1,24 @@
+# OS / editor noise
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+.env
+
+# Local data & artifacts (kept via .gitkeep)
+artifacts/*
+!artifacts/.gitkeep
+data/*
+!data/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/

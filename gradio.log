@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/Users/ayubyusuf/heartguard-logreg/app_tabs.py", line 652, in <module>
+    demo.launch(server_port=port)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/ayubyusuf/heartguard-logreg/.venv/lib/python3.13/site-packages/gradio/blocks.py", line 2770, in launch
+    ) = http_server.start_server(
+        ~~~~~~~~~~~~~~~~~~~~~~~~^
+        app=self.app,
+        ^^^^^^^^^^^^^
+    ...<4 lines>...
+        ssl_keyfile_password=ssl_keyfile_password,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/ayubyusuf/heartguard-logreg/.venv/lib/python3.13/site-packages/gradio/http_server.py", line 156, in start_server
+    raise OSError(
+        f"Cannot find empty port in range: {min(server_ports)}-{max(server_ports)}. You can specify a different port by setting the GRADIO_SERVER_PORT environment variable or passing the `server_port` parameter to `launch()`."
+    )
+OSError: Cannot find empty port in range: 7860-7860. You can specify a different port by setting the GRADIO_SERVER_PORT environment variable or passing the `server_port` parameter to `launch()`.
