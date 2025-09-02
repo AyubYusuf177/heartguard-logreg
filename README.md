@@ -1,16 +1,15 @@
 # HeartGuard — Logistic Regression From Scratch (Gradio)
 
-A plug-and-play web app for **binary classification on any CSV**.  
-Upload a CSV, pick a target column, and the app will:
-- auto-detect numeric/categorical features
-- impute missing values (median for numeric, most-frequent for categorical)
-- one-hot encode categoricals (`handle_unknown='ignore'`)
-- **train a vectorized logistic regression from scratch** (gradient descent, optional L2)
-- evaluate (Accuracy, Precision, Recall, F1, ROC-AUC)
-- plot Loss / ROC / PR
-- let you do **batch predictions** on another CSV with the trained model
+A plug-and-play web app for **binary classification on any CSV**.
 
-> **Note:** Target must be **binary**. If labels aren’t 0/1 (e.g., “Yes/No”), the app maps them to `{0,1}` and shows the mapping.
+> **Why your README links looked "broken"**
+>
+> Links like `http://127.0.0.1:7891/` (or `http://localhost:7891/`) only open **on the machine that is currently running the app**. If someone reads your README on GitHub, clicking that will try to open *their* computer’s localhost (which isn’t running your app), so it appears broken. Below, the README keeps localhost as a **clickable link** for your own use, and clarifies that others must run the app locally or you must deploy a public URL.
+
+## Local URL (when running)
+
+👉 [http://localhost:7891/](http://localhost:7891/)
+(Equivalent: [http://127.0.0.1:7891/](http://127.0.0.1:7891/))
 
 ---
 
@@ -19,7 +18,7 @@ Upload a CSV, pick a target column, and the app will:
 Clone and set up the environment:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/<your-username>/heartguard-logreg.git
 cd heartguard-logreg
 
 python3 -m venv .venv
@@ -28,14 +27,15 @@ source .venv/bin/activate   # macOS/Linux
 # Windows (cmd):        .venv\Scripts\activate.bat
 
 pip install -r requirements.txt
-````
+```
 
 ### Option A) Run in foreground (simple)
 
 ```bash
 python app_tabs.py
-# open http://127.0.0.1:7860
 ```
+
+Then open: [http://localhost:7860/](http://localhost:7860/)
 
 ### Option B) Run in background (recommended)
 
@@ -44,12 +44,16 @@ We include helper scripts that start/stop the app detached on **port 7891**:
 ```bash
 # start (defaults to port 7891)
 ./start_server.sh
-# open the app:
-open http://127.0.0.1:7891
+```
 
+Open the app: [http://localhost:7891/](http://localhost:7891/)
+
+```bash
 # stop (pass the port if you changed it)
 ./stop_server.sh 7891
 ```
+
+> **Tip:** If you prefer a different port, run `PORT=9000 ./start_server.sh` and open [http://localhost:9000/](http://localhost:9000/).
 
 ---
 
@@ -58,7 +62,7 @@ open http://127.0.0.1:7891
 ### Train on Upload
 
 1. Upload any CSV.
-2. Choose the **Target** column (must be binary).
+2. Choose the **Target** column (must be binary). If labels aren’t 0/1 (e.g., “Yes/No”), the app maps them to `{0,1}` and shows the mapping.
 3. (Optional) tweak Validation/Test split, Learning rate, L2 lambda, Epochs.
 4. Click **Train**.
 5. See metrics and plots. Full session predictions are saved to:
@@ -78,6 +82,7 @@ open http://127.0.0.1:7891
 
 ### Notes & Constraints
 
+* Target must be **binary** (exactly two unique labels).
 * Training in-session does **not** require your CSV to match any previous schema.
 * For batch predictions using a **saved** model, the CSV **must** include the same feature columns that model was trained on.
 * Unseen categorical levels at inference are ignored safely (`handle_unknown='ignore'`).
@@ -104,6 +109,14 @@ heartguard-logreg/
 └─ .gitignore
 ```
 
+**Quick links inside this repo:**
+
+* [`app_tabs.py`](app_tabs.py)
+* [`serve.py`](serve.py)
+* [`start_server.sh`](start_server.sh) · [`stop_server.sh`](stop_server.sh)
+* [`src/model_scratch.py`](src/model_scratch.py) · [`src/train.py`](src/train.py)
+* [`tests/grad_check.py`](tests/grad_check.py)
+
 ---
 
 ## Troubleshooting
@@ -116,12 +129,16 @@ heartguard-logreg/
   lsof -ti :7860 | xargs kill -9
   python app_tabs.py
   ```
+
 * If you used the background script (7891):
 
   ```bash
   ./stop_server.sh 7891
   ./start_server.sh 7891
-  open http://127.0.0.1:7891
+  # then open
+  xdg-open http://localhost:7891/   # Linux
+  open http://localhost:7891/       # macOS
+  start http://localhost:7891/      # Windows
   ```
 
 **App opens but no “Train on Upload” tab**
@@ -173,30 +190,51 @@ if __name__ == "__main__":
 
 *(Note: `server_name` should be just the host, e.g. `"127.0.0.1"`, not `"127.0.0.1:7891"`.)*
 
+---
 
-# =========================
 # Start / Stop / Verify UI
 
-# --- Start the app (runs in background; survives closing the terminal) ---
+**Start the app (background; survives closing the terminal)**
+
+```bash
 ./start_server.sh
+```
 
-# --- Open the UI in your browser (macOS) ---
-open http://127.0.0.1:7891
-# (Linux) xdg-open http://127.0.0.1:7891
-# (Windows) start http://127.0.0.1:7891
+**Open the UI in your browser**
 
-# --- Verify it's running / listening on the port ---
+* macOS: `open http://localhost:7891/`
+* Linux: `xdg-open http://localhost:7891/`
+* Windows: `start http://localhost:7891/`
+
+Or just click: [http://localhost:7891/](http://localhost:7891/)
+
+**Verify it’s running / listening on the port**
+
+```bash
 lsof -iTCP:7891 -sTCP:LISTEN -nP      # should show a Python process bound to 127.0.0.1:7891
+```
 
-# --- Check recent logs if the page says "site can't be reached" ---
+**Check recent logs if the page says "site can't be reached"**
+
+```bash
 tail -n 80 gradio-7891.log
+```
 
-# --- Stop the app cleanly ---
+**Stop the app cleanly**
+
+```bash
 ./stop_server.sh
+```
 
-# --- Notes ---
-# - After a reboot (or if you stop it), just run ./start_server.sh again.
-# - Logs live at gradio-7891.log; the background process ID is stored in gradio-7891.pid.
-# - If 7891 is busy, edit start_server.sh to use a different PORT and update the URL accordingly.
+**Notes**
 
+* After a reboot (or if you stop it), just run `./start_server.sh` again.
+* Logs live at `gradio-7891.log`; the background process ID is stored in `gradio-7891.pid`.
+* If 7891 is busy, run `PORT=9000 ./start_server.sh` and open [http://localhost:9000/](http://localhost:9000/).
 
+---
+
+## Sharing with others
+
+* Localhost URLs only work for **you**, while the app is running on your machine.
+* To share publicly, deploy to a hosting service (e.g., Hugging Face Spaces, Render, Fly.io, Railway) and update the README with that public URL.
